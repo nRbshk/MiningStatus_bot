@@ -1,3 +1,6 @@
 .vscode
 venv
 token.token
+config.config
+log.log
+__pycache__

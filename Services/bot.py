@@ -4,14 +4,23 @@ from aiogram import Bot, Dispatcher, dispatcher, executor
 from aiogram.types import BotCommand
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from Helpers.helpers import get_token
+from Helpers.helpers import config
+
+from Handlers.Show_handler import register_handlers_show
+from Handlers.Get_id_handler import register_handlers_get_id
+
+from Services.Check_rig import check_rig
+
+from asyncio import create_task
 
 logger = logging.getLogger(__name__)
 proxy_url = ""
 
 async def set_commands(bot: Bot):
     commands = [
-        BotCommand(command='/show', description='Show current mining stat')
+        BotCommand(command='/show', description='Show current mining stat'),
+        BotCommand(command='/setup', description='Setup miner'),
+        BotCommand(command='/get_id', description='Return your ID')
 
     ]
 
@@ -30,7 +39,16 @@ async def start():
     )
     logger.info("Starting bot")
 
-    bot = Bot(token=get_token(), proxy=proxy_url)
+    bot = Bot(token=config['token'], proxy=proxy_url)
     dp = Dispatcher(bot, storage=MemoryStorage())
+
+
+    register_handlers_show(dp)
+    register_handlers_get_id(dp)
+
+    await set_commands(bot)
+
+    create_task(check_rig(bot))
+    await dp.start_polling(timeout=600)
 
     
