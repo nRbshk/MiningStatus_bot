@@ -30,8 +30,8 @@ temperature = 'temperature'
 fan = 'fan'
 accepted_shares = 'accepted_shares'
 rejected_shares = 'rejected_shares'
+invalid_shares =  'invalid_shares'
 
-json_dict = dict.fromkeys([info, mem_clock, core_clock, mem_utilization, core_utilization, hashrate, power, temperature, fan, accepted_shares, rejected_shares])
 
 def prepare_message(json: dict) -> str:
     global count_to_write
@@ -40,15 +40,15 @@ def prepare_message(json: dict) -> str:
     start_time = datetime.timedelta(seconds=int(time.time()) - json['start_time'])
 
     for device in json['miner']['devices']:
-        device_item = dict.fromkeys([info, mem_clock, core_clock, mem_utilization, core_utilization, hashrate, power, temperature, fan, accepted_shares, rejected_shares])
+        device_item = dict.fromkeys([info, mem_clock, core_clock, mem_utilization, core_utilization, hashrate, power, temperature, fan, accepted_shares, rejected_shares, invalid_shares])
         device[info] = " ".join(device[info].split(" ")[-2:]) # can be NVIDIA GEFORCE RTX 3060ti, getting only RTX 3060ti. Not Tested for AMD
        
         accepted = int(device[accepted_shares])
         rejected = int(device[rejected_shares])
-        
-        percent_of_rejected = 100 * rejected / (accepted + rejected)
+        invalid = int(device[invalid_shares])
+        percent_of_rejected = 100 * (rejected + invalid) / (accepted + rejected + invalid)
 
-        for key in json_dict.keys():
+        for key in device_item.keys():
             device_item[key] = "{0:<17} {1:>14}\n".format(str(key).upper() + ":", str(device[key]))
 
 

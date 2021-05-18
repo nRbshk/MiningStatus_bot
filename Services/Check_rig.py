@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 url = 'http://127.0.0.1:22333/api/v1/status'
 
 async def check_rig(bot: Bot):
-    delay = 10
+    delay = 60
 
     while True:
         logger.info("Starting check rigs")
