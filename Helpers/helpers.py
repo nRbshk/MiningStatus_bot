@@ -16,7 +16,7 @@ def get_config(fn: str = "config.ini") -> dict:
         if line.count('['):
             continue
         key, value = line.split("=")
-        if key in ['ports', 'miners', 'active_miners', 'name_miners']:
+        if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers']:
             value = value.split(",")
         config.update({key : value})
 
@@ -25,10 +25,10 @@ def get_config(fn: str = "config.ini") -> dict:
 def save_config( config: dict, fn: str = "config.ini") -> None:
     with open(fn, 'w') as f:
         for key, value in config.items():
-            if key in ['active_miners']:
-                for index, val in enumerate(config['active_miners']):
+            if key in ['active_miners', 'avg_hashrates', 'avg_powers']:
+                for index, val in enumerate(config[key]):
                     config['active_miners'][index] = str(val)
-            if key in ['ports', 'miners', 'active_miners', 'name_miners']:
+            if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers']:
                 value = ",".join(value)
             if key == 'chat_id':
                 f.write("[CLIENT]\n")
@@ -49,6 +49,9 @@ fan = 'fan'
 accepted_shares = 'accepted_shares'
 rejected_shares = 'rejected_shares'
 invalid_shares =  'invalid_shares'
+
+coins_dict = {'ergo' : '340-erg-autolykos', 'eth' : '151-eth-ethash', 'ethash' : '151-eth-ethash'}
+
 
 def get_device_info(json: dict) -> str:
     devices = []
@@ -79,7 +82,6 @@ def get_device_info(json: dict) -> str:
     return answer
 
 def get_profit(json: dict) -> str:
-    coins_dict = {'ergo' : '340-erg-autolykos', 'eth' : '151-eth-ethash', 'ethash' : '151-eth-ethash'}
 
     coin = coins_dict[json['stratum']['algorithm']]
     device_count = { }
@@ -99,7 +101,7 @@ def get_profit(json: dict) -> str:
 
     response = get(f"https://whattomine.com/coins/{coin}?cost={config['cost']}&hr={total_hashrate}&p={total_power}")
     if response.status_code != 200:
-        return "Whattomine is not active"
+        return "Whattomine is not reachable!"
     
 
     soup = BeautifulSoup(response.text, 'lxml')
@@ -119,8 +121,6 @@ def get_profit(json: dict) -> str:
     answer += "{0:<10}${1:<9}{2:>12}\n".format("MONTH", month_profit, month_estimated_rewards)
 
     return answer
-    
-
 
 
 def prepare_message(json: dict) -> str:
@@ -146,6 +146,32 @@ def get_time() -> str:
     """
     time = str(datetime.datetime.now())
     return time[0:19]
+
+
+def check_maximum_profit(coins: list, hashrates: list, powers: list) -> str:
+    profit_dict = dict.fromkeys(coins)
+    for index, coin in enumerate(coins):
+        current_coin = coins_dict[coin]
+        response = get(f"https://whattomine.com/coins/{current_coin}?cost={config['cost']}&hr={hashrates[index]}&p={powers[index]}")
+        if response.status_code != 200:
+            return "Whattomine is not reachable!"
+            
+        soup = BeautifulSoup(response.text, 'lxml')
+
+        table = [line for line in soup.find('tr', {'class' : 'table-active'}).text.split("\n") if line != ""]
+
+        profit_dict[coin] = float(table[-1][1:])
+    
+    max_profit = max(profit_dict.values())
+    max_profit_index = list(profit_dict.values()).index(max_profit)
+    max_profit_coin = list(profit_dict.keys())[max_profit_index]
+    answer = "BEST PROFIT COIN RIGHT NOW\n" 
+    answer += "{0:<10}${1:<9}\n".format(max_profit_coin.upper(), "FIAT")
+    answer += "{0:<10}${1:.2f}\n".format("DAY", max_profit)
+    answer += "{0:<10}${1:.2f}\n".format("WEEK", max_profit * 7)
+    answer += "{0:<10}${1:.2f}\n".format("MONTH", max_profit * 30)
+
+    return answer
 
 config = get_config("config.ini")
 

@@ -6,7 +6,7 @@ from aiogram.utils.markdown import code
 from aiogram import types
 
 
-from Helpers.helpers import config, prepare_message, save_config
+from Helpers.helpers import check_maximum_profit, config, prepare_message, save_config
 
 from aiogram import Bot
 
@@ -25,12 +25,13 @@ async def check_rig(bot: Bot):
             await sleep(delay)
             continue
         edited_msg = "STATISTIC\n"
-        for port in config['ports']:
 
+        edited_msg += check_maximum_profit(config['name_miners'], config['avg_hashrates'], config['avg_powers'])
+        for port in config['ports']:
             try:
                 response = get(f'http://127.0.0.1:{port}/api/v1/status')
             except:
-                edited_msg += f"Rig at port {port} is not active!\n\n"
+                edited_msg += f"\nRig at port {port} is not active!\n\n"
                 continue
 
             if response.status_code == 200:
