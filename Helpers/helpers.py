@@ -1,7 +1,7 @@
 import logging
 import datetime
 import time
-from requests import get, post
+from requests import get
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
@@ -165,6 +165,8 @@ def check_maximum_profit(coins: list, hashrates: list, powers: list, wallets: li
 
         if wallets[index] != '-':
             answer += check_ergo_balance_at_nanopool(coins[index], wallets[index])
+        
+        time.sleep(0.5)
     
     max_profit = max(profit_dict.values())
     max_profit_index = list(profit_dict.values()).index(max_profit)
