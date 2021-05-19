@@ -1,0 +1,5 @@
+aiogram
+bs4
+lxml
+psutil
+requests
