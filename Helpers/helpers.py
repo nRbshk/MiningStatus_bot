@@ -108,10 +108,13 @@ def get_profit(json: dict) -> str:
 
     table = [line for line in soup.find('tr', {'class' : 'table-active'}).text.split("\n") if line != ""]
 
-    daily_profit = float(table[-1][1:])
+    try:
+        daily_profit = float(table[-1][1:])
+        daily_estimated_rewards = float(table[2])
+    except:
+        return "Whattomine is not reachable!"
     week_profit = "{0:.2f}".format(daily_profit * 7)
     month_profit = "{0:.2f}".format(daily_profit * 30)
-    daily_estimated_rewards = float(table[2])
     week_estimated_rewards = "{0:.6f}".format(daily_estimated_rewards * 7)
     month_estimated_rewards = "{0:.6f}".format(daily_estimated_rewards * 30)
 
@@ -141,9 +144,6 @@ def prepare_message(json: dict) -> str:
 
 def get_time() -> str:
     logger.info("START Getting date")
-    """
-    return date in format day.month.year
-    """
     time = str(datetime.datetime.now())
     return time[0:19]
 
@@ -161,7 +161,10 @@ def check_maximum_profit(coins: list, hashrates: list, powers: list, wallets: li
 
         table = [line for line in soup.find('tr', {'class' : 'table-active'}).text.split("\n") if line != ""]
 
-        profit_dict[coin] = float(table[-1][1:])
+        try:
+            profit_dict[coin] = float(table[-1][1:])
+        except:
+            return "Whattomine is not reachable!"
 
         if wallets[index] != '-':
             answer += check_ergo_balance_at_nanopool(coins[index], wallets[index])
