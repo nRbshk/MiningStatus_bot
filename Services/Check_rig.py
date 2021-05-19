@@ -26,7 +26,7 @@ async def check_rig(bot: Bot):
             continue
         edited_msg = "STATISTIC\n"
 
-        edited_msg += check_maximum_profit(config['name_miners'], config['avg_hashrates'], config['avg_powers'], config['wallets'])
+        edited_msg += check_maximum_profit(config['coins'], config['avg_hashrates'], config['avg_powers'], config['wallets'])
         for port in config['ports']:
             try:
                 response = get(f'http://127.0.0.1:{port}/api/v1/status')

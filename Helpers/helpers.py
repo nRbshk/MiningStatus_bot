@@ -16,7 +16,7 @@ def get_config(fn: str = "config.ini") -> dict:
         if line.count('['):
             continue
         key, value = line.split("=")
-        if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers', 'wallets']:
+        if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers', 'wallets', 'coins']:
             value = value.split(",")
         config.update({key : value})
 
@@ -25,10 +25,10 @@ def get_config(fn: str = "config.ini") -> dict:
 def save_config( config: dict, fn: str = "config.ini") -> None:
     with open(fn, 'w') as f:
         for key, value in config.items():
-            if key in ['active_miners', 'avg_hashrates', 'avg_powers']:
+            if key in ['active_miners', 'avg_hashrates', 'avg_powers', 'coins']:
                 for index, val in enumerate(config[key]):
                     config['active_miners'][index] = str(val)
-            if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers', 'wallets']:
+            if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers', 'wallets', 'coins']:
                 value = ",".join(value)
             if key == 'chat_id':
                 f.write("[CLIENT]\n")
