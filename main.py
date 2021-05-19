@@ -3,5 +3,5 @@ from Services.bot import start
 
 
 if __name__ == '__main__':
-    print('running bot')
+    print('Running MINING STATUS bot.')
     run(start())
