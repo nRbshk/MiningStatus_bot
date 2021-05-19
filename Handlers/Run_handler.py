@@ -33,5 +33,5 @@ async def start_h(message: types.Message, state: FSMContext):
     await state.finish()
 
 def register_handlers_start(dp: Dispatcher):
-    dp.register_message_handler(start_h, commands="run", state="*")
+    dp.register_message_handler(start_h, commands="start", state="*")
     dp.register_message_handler(cmd_cancel, commands='cancel', state='*')

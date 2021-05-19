@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 async def check_rig(bot: Bot):
-    delay = 10
+    delay = 30
 
     while True:
         logger.info("Starting check rigs")

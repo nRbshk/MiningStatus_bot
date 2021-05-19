@@ -58,5 +58,5 @@ async def start_rig(message: types.Message, state: FSMContext):
 
 
 def register_handlers_start_miner(dp: Dispatcher):
-    dp.register_message_handler(choose_rig, commands="start_miner", state="*")
+    dp.register_message_handler(choose_rig, commands="run", state="*")
     dp.register_message_handler(start_rig, state=Start_miner.choose_rig)
