@@ -1,6 +1,8 @@
 .vscode
 venv
 token.token
-config.config
+config.ini
 log.log
 __pycache__
+NBMiner
+logs
