@@ -3,12 +3,8 @@ import logging
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.utils.markdown import code, bold
 
-
-from requests import get
-
-from Helpers.helpers import config, save_config, get_time, prepare_message
+from Helpers.helpers import config, save_config
 
 import subprocess
 

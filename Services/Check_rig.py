@@ -2,7 +2,7 @@ import logging
 
 from asyncio import sleep
 
-from aiogram.utils.markdown import code, bold
+from aiogram.utils.markdown import code
 from aiogram import types
 
 
@@ -37,6 +37,9 @@ async def check_rig(bot: Bot):
                 json = response.json()
                 edited_msg += prepare_message(json)
                 edited_msg += "\n\n"
+
+            del response
+
                 
         edited_msg = code(edited_msg)
         if config['last_message'] == "-1":
@@ -49,6 +52,6 @@ async def check_rig(bot: Bot):
             except:
                 logger.error("cant edit message")
 
-
+        del edited_msg
         await sleep(delay)
 

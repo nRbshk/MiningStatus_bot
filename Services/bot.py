@@ -6,7 +6,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from Helpers.helpers import config
 
-from Handlers.Start_handler import register_handlers_start
+from Handlers.Run_handler import register_handlers_start
 from Handlers.Start_miner_handler import register_handlers_start_miner
 from Handlers.Stop_rigs_handler import register_handlers_stop
 
@@ -22,7 +22,7 @@ async def set_commands(bot: Bot):
         BotCommand(command='/start', description='How to start'),
         BotCommand(command='/cancel', description='Reset to start'),
         BotCommand(command='/stop', description='Stop all rigs'),
-        BotCommand(command='/start_miner', description='Run choosen miner')
+        BotCommand(command='/run', description='Run choosen miner')
 
     ]
 
@@ -52,6 +52,7 @@ async def start():
     await set_commands(bot)
 
     create_task(check_rig(bot))
+    
     await dp.start_polling(timeout=600)
 
     
