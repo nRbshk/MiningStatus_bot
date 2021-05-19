@@ -9,20 +9,32 @@ logger = logging.getLogger(__name__)
 
 count_to_write = 0
 
-def get_config(fn: str = "config.config") -> dict:
+def get_config(fn: str = "config.ini") -> dict:
     data = [line.strip("\n") for line in open(fn, 'r').readlines()]
     config = {}
     for line in data:
+        if line.count('['):
+            continue
         key, value = line.split("=")
-        if key == 'ports':
+        if key in ['ports', 'miners', 'active_miners', 'name_miners']:
             value = value.split(",")
         config.update({key : value})
 
     return config
 
-def save_config( config: dict, fn: str = "config.config") -> None:
+def save_config( config: dict, fn: str = "config.ini") -> None:
     with open(fn, 'w') as f:
         for key, value in config.items():
+            if key in ['active_miners']:
+                for index, val in enumerate(config['active_miners']):
+                    config['active_miners'][index] = str(val)
+            if key in ['ports', 'miners', 'active_miners', 'name_miners']:
+                value = ",".join(value)
+            if key == 'chat_id':
+                f.write("[CLIENT]\n")
+            if key == 'ports':
+                f.write('[MINERS]\n')
+            
             f.write(f"{key}={value}\n")
     
 info = 'info'
@@ -47,19 +59,12 @@ def get_device_info(json: dict) -> str:
         device_item = dict.fromkeys([info, mem_clock, core_clock, mem_utilization, core_utilization, hashrate, power, temperature, fan, accepted_shares, rejected_shares, invalid_shares])
         device[info] = " ".join(device[info].split(" ")[-2:]) # can be NVIDIA GEFORCE RTX 3060ti, getting only RTX 3060ti. Not Tested for AMD
        
-        accepted = int(device[accepted_shares])
-        rejected = int(device[rejected_shares])
-        invalid = int(device[invalid_shares])
-        percent_of_rejected = 100 * (rejected + invalid) / (accepted + rejected + invalid)
-
         for key in device_item.keys():
             device_item[key] = "{0:<17} {1:>14}\n".format(str(key).upper() + ":", str(device[key]))
 
 
         if int(device[temperature]) > int(config['temp_limit']):
             warning_info += f"Temperature is {device[temperature]} at device {device[info]}!\n"
-        if percent_of_rejected > int(config['allowed_percent_of_rejected_shares']):
-            warning_info += f"Too much rejected shares {percent_of_rejected:.2f}%"
 
         devices.append(device_item)
     answer = ""
@@ -76,7 +81,6 @@ def get_device_info(json: dict) -> str:
 def get_profit(json: dict) -> str:
     coins_dict = {'ergo' : '340-erg-autolykos', 'eth' : '151-eth-ethash', 'ethash' : '151-eth-ethash'}
 
-    # whattomine_url_api = f"https://whattomine.com/coins/340-erg-autolykos?cost=0.0&hr=400&p=130.0
     coin = coins_dict[json['stratum']['algorithm']]
     device_count = { }
     total_hashrate = 0.0
@@ -143,6 +147,6 @@ def get_time() -> str:
     time = str(datetime.datetime.now())
     return time[0:19]
 
-config = get_config("config.config")
+config = get_config("config.ini")
 
 

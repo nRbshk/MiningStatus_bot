@@ -12,6 +12,11 @@ class Start_handler(StatesGroup):
 
     start = State()
 
+async def cmd_cancel(message: types.Message, state: FSMContext):
+    logger.info("CMD cancel")
+    await state.finish()
+    await message.answer("Cancel", reply_markup=types.ReplyKeyboardRemove())
+
 
 
 
@@ -29,3 +34,4 @@ async def start_h(message: types.Message, state: FSMContext):
 
 def register_handlers_start(dp: Dispatcher):
     dp.register_message_handler(start_h, commands="start", state="*")
+    dp.register_message_handler(cmd_cancel, commands='cancel', state='*')

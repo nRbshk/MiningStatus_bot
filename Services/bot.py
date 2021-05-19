@@ -6,8 +6,9 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from Helpers.helpers import config
 
-from Handlers.Show_handler import register_handlers_show
 from Handlers.Start_handler import register_handlers_start
+from Handlers.Start_miner_handler import register_handlers_start_miner
+from Handlers.Stop_rigs_handler import register_handlers_stop
 
 from Services.Check_rig import check_rig
 
@@ -18,8 +19,10 @@ proxy_url = ""
 
 async def set_commands(bot: Bot):
     commands = [
-        BotCommand(command='/show', description='Show current mining stat'),
-        BotCommand(command='/start', description='How to start')
+        BotCommand(command='/start', description='How to start'),
+        BotCommand(command='/cancel', description='Reset to start'),
+        BotCommand(command='/stop', description='Stop all rigs'),
+        BotCommand(command='/start_miner', description='Run choosen miner')
 
     ]
 
@@ -42,8 +45,9 @@ async def start():
     dp = Dispatcher(bot, storage=MemoryStorage())
 
 
-    register_handlers_show(dp)
     register_handlers_start(dp)
+    register_handlers_start_miner(dp)
+    register_handlers_stop(dp)
 
     await set_commands(bot)
 
