@@ -16,7 +16,7 @@ def get_config(fn: str = "config.ini") -> dict:
         if line.count('['):
             continue
         key, value = line.split("=")
-        if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers']:
+        if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers', 'wallets']:
             value = value.split(",")
         config.update({key : value})
 
@@ -28,7 +28,7 @@ def save_config( config: dict, fn: str = "config.ini") -> None:
             if key in ['active_miners', 'avg_hashrates', 'avg_powers']:
                 for index, val in enumerate(config[key]):
                     config['active_miners'][index] = str(val)
-            if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers']:
+            if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers', 'wallets']:
                 value = ",".join(value)
             if key == 'chat_id':
                 f.write("[CLIENT]\n")
@@ -148,8 +148,9 @@ def get_time() -> str:
     return time[0:19]
 
 
-def check_maximum_profit(coins: list, hashrates: list, powers: list) -> str:
+def check_maximum_profit(coins: list, hashrates: list, powers: list, wallets: list) -> str:
     profit_dict = dict.fromkeys(coins)
+    answer = ""
     for index, coin in enumerate(coins):
         current_coin = coins_dict[coin]
         response = get(f"https://whattomine.com/coins/{current_coin}?cost={config['cost']}&hr={hashrates[index]}&p={powers[index]}")
@@ -161,16 +162,36 @@ def check_maximum_profit(coins: list, hashrates: list, powers: list) -> str:
         table = [line for line in soup.find('tr', {'class' : 'table-active'}).text.split("\n") if line != ""]
 
         profit_dict[coin] = float(table[-1][1:])
+
+        if wallets[index] != '-':
+            answer += check_ergo_balance_at_nanopool(coins[index], wallets[index])
     
     max_profit = max(profit_dict.values())
     max_profit_index = list(profit_dict.values()).index(max_profit)
     max_profit_coin = list(profit_dict.keys())[max_profit_index]
-    answer = "BEST PROFIT COIN RIGHT NOW\n" 
+
+    answer += "\nBEST PROFIT COIN RIGHT NOW\n" 
     answer += "{0:<10}${1:<9}\n".format(max_profit_coin.upper(), "FIAT")
     answer += "{0:<10}${1:.2f}\n".format("DAY", max_profit)
     answer += "{0:<10}${1:.2f}\n".format("WEEK", max_profit * 7)
-    answer += "{0:<10}${1:.2f}\n".format("MONTH", max_profit * 30)
+    answer += "{0:<10}${1:.2f}\n\n".format("MONTH", max_profit * 30)
 
+    return answer
+
+
+def check_ergo_balance_at_nanopool(coin, wallet):
+
+    response = get(f"https://api.nanopool.org/v1/{coin}/user/{wallet}")
+
+    if response.status_code != 200:
+        return "Nanopool is not reachable!"
+    
+    data = response.json()['data']
+    balance = data['balance']
+    unconfirmed_balance = data['unconfirmed_balance']
+    answer = "{0:<20}{1:<10}\n".format("COIN", coin.upper())
+    answer += "{0:<20}{1:<10}\n".format("BALANCE", balance)
+    answer += "{0:<20}{1:<10}\n".format("UNCONFIRMED BALANCE", unconfirmed_balance)
     return answer
 
 config = get_config("config.ini")
