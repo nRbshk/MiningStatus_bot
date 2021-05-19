@@ -15,26 +15,31 @@ from requests import get
 
 logger = logging.getLogger(__name__)
 
-url = 'http://127.0.0.1:22333/api/v1/status'
 
 async def check_rig(bot: Bot):
     delay = 60
 
     while True:
         logger.info("Starting check rigs")
-        response = get(url)
-
-        if response.status_code != 200:
-            await bot.edit_message_text("No active miners!", config['chat_id'], config['last_message'],)
+        if config['chat_id'] == '-1':
             await sleep(delay)
             continue
-        
-        json = response.json()
+        edited_msg = ""
+        for port in config['ports']:
 
-        miner = json['miner']
-        start_time = json['start_time']
+            try:
+                response = get(f'http://127.0.0.1:{port}/api/v1/status')
+            except:
+                edited_msg += f"Rig at port {port} is not active!\n\n"
+                continue
 
-        edited_msg = code(prepare_message(json))
+            if response.status_code == 200:
+                json = response.json()
+
+                edited_msg += prepare_message(json)
+                edited_msg += "\n\n"
+        edited_msg = code(edited_msg)
+
         if config['last_message'] == "-1":
             last_message = await bot.send_message(chat_id=config['chat_id'], text=edited_msg, parse_mode=types.ParseMode.MARKDOWN_V2)
             config['last_message'] = last_message['message_id']

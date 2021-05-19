@@ -7,7 +7,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from Helpers.helpers import config
 
 from Handlers.Show_handler import register_handlers_show
-from Handlers.Get_id_handler import register_handlers_get_id
+from Handlers.Start_handler import register_handlers_start
 
 from Services.Check_rig import check_rig
 
@@ -19,8 +19,7 @@ proxy_url = ""
 async def set_commands(bot: Bot):
     commands = [
         BotCommand(command='/show', description='Show current mining stat'),
-        BotCommand(command='/setup', description='Setup miner'),
-        BotCommand(command='/get_id', description='Return your ID')
+        BotCommand(command='/start', description='How to start')
 
     ]
 
@@ -44,7 +43,7 @@ async def start():
 
 
     register_handlers_show(dp)
-    register_handlers_get_id(dp)
+    register_handlers_start(dp)
 
     await set_commands(bot)
 

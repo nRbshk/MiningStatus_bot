@@ -1,7 +1,11 @@
 import logging
 import datetime
 import time
+from requests import get, post
+from bs4 import BeautifulSoup
+
 logger = logging.getLogger(__name__)
+
 
 count_to_write = 0
 
@@ -10,6 +14,8 @@ def get_config(fn: str = "config.config") -> dict:
     config = {}
     for line in data:
         key, value = line.split("=")
+        if key == 'ports':
+            value = value.split(",")
         config.update({key : value})
 
     return config
@@ -32,9 +38,7 @@ accepted_shares = 'accepted_shares'
 rejected_shares = 'rejected_shares'
 invalid_shares =  'invalid_shares'
 
-
-def prepare_message(json: dict) -> str:
-    global count_to_write
+def get_device_info(json: dict) -> str:
     devices = []
     warning_info = ""
     start_time = datetime.timedelta(seconds=int(time.time()) - json['start_time'])
@@ -62,12 +66,66 @@ def prepare_message(json: dict) -> str:
     for device in devices:
         for values in device.values():
             answer += values
-        answer += "\n\n"
+        answer += "\n"
 
-    answer += "Some profit\n"
     answer += "{0:<17} {1:>14}\n".format("UPTIME", str(start_time))
     answer += warning_info
-    answer += "\n\n"
+    
+    return answer
+
+def get_profit(json: dict) -> str:
+    coins_dict = {'ergo' : '340-erg-autolykos', 'eth' : '151-eth-ethash', 'ethash' : '151-eth-ethash'}
+
+    # whattomine_url_api = f"https://whattomine.com/coins/340-erg-autolykos?cost=0.0&hr=400&p=130.0
+    coin = coins_dict[json['stratum']['algorithm']]
+    device_count = { }
+    total_hashrate = 0.0
+    total_power = 0.0
+    
+    for device in json['miner']['devices']:
+        key = device[info]
+        hrate = float(device[hashrate].split('.')[0])
+        dpower = float(device[power])
+        if key in device_count.keys():
+            device_count[key] += 1
+        else:
+            device_count.update({key : 1 })
+        total_hashrate += hrate
+        total_power += dpower
+
+    response = get(f"https://whattomine.com/coins/{coin}?cost={config['cost']}&hr={total_hashrate}&p={total_power}")
+    if response.status_code != 200:
+        return "Whattomine is not active"
+    
+
+    soup = BeautifulSoup(response.text, 'lxml')
+
+    table = [line for line in soup.find('tr', {'class' : 'table-active'}).text.split("\n") if line != ""]
+
+    daily_profit = float(table[-1][1:])
+    week_profit = "{0:.2f}".format(daily_profit * 7)
+    month_profit = "{0:.2f}".format(daily_profit * 30)
+    daily_estimated_rewards = float(table[2])
+    week_estimated_rewards = "{0:.6f}".format(daily_estimated_rewards * 7)
+    month_estimated_rewards = "{0:.6f}".format(daily_estimated_rewards * 30)
+
+    answer = ""
+    answer += "{0:<10}${1:<9}{2:>12}\n".format("DAY", daily_profit, daily_estimated_rewards)
+    answer += "{0:<10}${1:<9}{2:>12}\n".format("WEEK", week_profit, week_estimated_rewards)
+    answer += "{0:<10}${1:<9}{2:>12}\n".format("MONTH", month_profit, month_estimated_rewards)
+
+    return answer
+    
+
+
+
+def prepare_message(json: dict) -> str:
+    global count_to_write
+    answer = "{0:<17} {1:>14}\n".format("COIN:", json['stratum']['algorithm'])
+    answer += get_device_info(json)
+    answer += "\n"
+    answer += get_profit(json)
+    answer += "\n"
     answer += f"Updated at {get_time()}"
     if count_to_write % 10 == 0:
         logger.info(answer)
