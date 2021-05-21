@@ -22,10 +22,7 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 
 async def start_h(message: types.Message, state: FSMContext):
     cid = message.from_user.id
-    if config['chat_id'] == '-1':
-        await message.answer("You need to specify your ID at bot. You can do this with /start.")
-        await state.finish()
-    elif config['chat_id'] != cid:
+    if config['chat_id'] != cid:
         await message.answer("You are not admin and you can't use this bot.")
         await state.finish()
     else:
