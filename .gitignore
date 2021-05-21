@@ -6,3 +6,6 @@ log.log
 __pycache__
 NBMiner
 logs
+nbminer.exe
+driver_install.bat
+driver_uninstall.bat
