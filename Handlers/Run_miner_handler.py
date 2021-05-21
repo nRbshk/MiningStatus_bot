@@ -19,10 +19,9 @@ class Start_miner(StatesGroup):
 
 def run_rig(index):
     path = config['miner_path'] + '\\' + config['miners'][index]
-    
     p = subprocess.Popen(path, creationflags=subprocess.CREATE_NEW_CONSOLE)
 
-    config['active_miners'][index] = 1
+    config['active_miners'][index] = '1'
 
 
 async def choose_rig(message: types.Message, state: FSMContext):

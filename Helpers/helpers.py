@@ -27,7 +27,7 @@ def save_config( config: dict, fn: str = "config.ini") -> None:
         for key, value in config.items():
             if key in ['active_miners', 'avg_hashrates', 'avg_powers', 'coins']:
                 for index, val in enumerate(config[key]):
-                    config['active_miners'][index] = str(val)
+                    config[key][index] = str(val)
             if key in ['ports', 'miners', 'active_miners', 'name_miners', 'avg_hashrates', 'avg_powers', 'wallets', 'coins']:
                 value = ",".join(value)
             if key == 'chat_id':
