@@ -177,7 +177,7 @@ def check_maximum_profit(config) -> str:
 def check_ergo_balance_at_nanopool(coin, wallet):
     logger.info(f"Checking balance for {coin} at nanopool.")
 
-    response = get(f"https://api.nanopool.org/v1/{coin}/user/{wallet}aaa")
+    response = get(f"https://api.nanopool.org/v1/{coin}/user/{wallet}")
     
 
     if response.status_code != 200:
