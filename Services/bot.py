@@ -41,10 +41,9 @@ async def start():
     )
     logger.info("Starting bot")
 
-    bot = Bot(token=config['token'], proxy=proxy_url)
+    bot = Bot(token=config['CLIENT']['token'], proxy=proxy_url)
     dp = Dispatcher(bot, storage=MemoryStorage())
-
-
+    
     register_handlers_start(dp)
     register_handlers_start_miner(dp)
     register_handlers_stop(dp)

@@ -4,7 +4,7 @@ from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from Helpers.helpers import config, save_config
+from Helpers.helpers import config, save_config, get_coins_names_from_config
 
 import psutil
 
@@ -21,15 +21,16 @@ def stop_rigs():
     for proc in psutil.process_iter():
         if name.lower() == proc.name().lower():
             proc.kill()
-    for index in range(len(config['active_miners'])):
-        config['active_miners'][index] = 0
+    
+    for coin in get_coins_names_from_config(config):
+        config[coin]['active_miner'] = '0'
 
 async def stop(message: types.Message, state: FSMContext):
     cid = str(message.from_user.id)
-    if config['chat_id'] == '-1':
+    if config['CLIENT']['chat_id'] == '-1':
         await message.answer("You need to specify your ID at bot. You can do this with /start.")
         await state.finish()
-    elif config['chat_id'] != cid:
+    elif config['CLIENT']['chat_id'] != cid:
         await message.answer("You are not admin and you can't use this bot.")
         await state.finish()
     else:

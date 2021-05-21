@@ -22,18 +22,22 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 
 async def start_h(message: types.Message, state: FSMContext):
     cid = str(message.from_user.id)
-    if config['chat_id'] == "-1":
+    if config['CLIENT']['chat_id'] == "-1":
         last_message = await message.answer(f"Config file succesfully updated.\nIf config file is configured it will update automaticaly.")
         logger.info(f"Message from user {cid}")
 
-        config['chat_id'] = cid
-        config['last_message'] = last_message['message_id']
+        config['CLIENT']['chat_id'] = cid
+        config['CLIENT']['last_message'] = last_message['message_id']
         
         save_config(config)
         
         await state.finish()
-    elif config['chat_id'] != cid:
+    elif config['CLIENT']['chat_id'] != cid:
         await message.answer("You are not admin and you can't use this bot.")
+        await state.finish()
+    
+    else:
+        await message.answer("You are already ready to control.")
         await state.finish()
 
 
