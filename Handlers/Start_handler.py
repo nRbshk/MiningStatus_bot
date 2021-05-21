@@ -22,15 +22,22 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 
 async def start_h(message: types.Message, state: FSMContext):
     cid = message.from_user.id
-    last_message = await message.answer(f"Config file succesfully updated.\nIf config file is configured it will update automaticaly.")
-    logger.info(f"Message from user {cid}")
+    if config['chat_id'] == '-1':
+        await message.answer("You need to specify your ID at bot. You can do this with /start.")
+        await state.finish()
+    elif config['chat_id'] != cid:
+        await message.answer("You are not admin and you can't use this bot.")
+        await state.finish()
+    else:
+        last_message = await message.answer(f"Config file succesfully updated.\nIf config file is configured it will update automaticaly.")
+        logger.info(f"Message from user {cid}")
 
-    config['chat_id'] = cid
-    config['last_message'] = last_message['message_id']
-    
-    save_config(config)
-    
-    await state.finish()
+        config['chat_id'] = cid
+        config['last_message'] = last_message['message_id']
+        
+        save_config(config)
+        
+        await state.finish()
 
 def register_handlers_start(dp: Dispatcher):
     dp.register_message_handler(start_h, commands="start", state="*")

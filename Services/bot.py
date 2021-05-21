@@ -6,8 +6,8 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from Helpers.helpers import config
 
-from Handlers.Run_handler import register_handlers_start
-from Handlers.Start_miner_handler import register_handlers_start_miner
+from Handlers.Run_miner_handler import register_handlers_start_miner
+from Handlers.Start_handler import register_handlers_start
 from Handlers.Stop_rigs_handler import register_handlers_stop
 
 from Services.Check_rig import check_rig

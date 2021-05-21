@@ -26,11 +26,18 @@ def run_rig(index):
 
 
 async def choose_rig(message: types.Message, state: FSMContext):
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    for val in config['name_miners']:
-        kb.add(val)
-    await message.answer("Choose rig.", reply_markup=kb)
-    await Start_miner.choose_rig.set()
+    if config['chat_id'] == '-1':
+        await message.answer("You need to specify your ID at bot. You can do this with /start.")
+        await state.finish()
+    elif config['chat_id'] != message.from_user.id:
+        await message.answer("You are not admin and you can't use this bot.")
+        await state.finish()
+    else:
+        kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        for val in config['name_miners']:
+            kb.add(val)
+        await message.answer("Choose rig.", reply_markup=kb)
+        await Start_miner.choose_rig.set()
 
 async def start_rig(message: types.Message, state: FSMContext):
     name = message.text
