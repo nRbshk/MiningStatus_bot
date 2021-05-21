@@ -43,7 +43,7 @@ def run_rig(name):
 
     run_miner += f'-log --temperature-limit {temp_limit} --api 127.0.0.1:{port}'
     
-    print(run_miner)
+    logger.info(f"Running command:\n{run_miner}")
     p = subprocess.Popen(run_miner, creationflags=subprocess.CREATE_NEW_CONSOLE)
 
     config[name]['active_miner'] = '1'
