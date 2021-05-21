@@ -25,7 +25,7 @@ def stop_rigs():
         config['active_miners'][index] = 0
 
 async def stop(message: types.Message, state: FSMContext):
-    cid = message.from_user.id
+    cid = str(message.from_user.id)
     if config['chat_id'] == '-1':
         await message.answer("You need to specify your ID at bot. You can do this with /start.")
         await state.finish()

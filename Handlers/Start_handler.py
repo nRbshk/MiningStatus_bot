@@ -21,7 +21,7 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 
 
 async def start_h(message: types.Message, state: FSMContext):
-    cid = message.from_user.id
+    cid = str(message.from_user.id)
     if config['chat_id'] == "-1":
         last_message = await message.answer(f"Config file succesfully updated.\nIf config file is configured it will update automaticaly.")
         logger.info(f"Message from user {cid}")
