@@ -27,7 +27,7 @@ async def start_h(message: types.Message, state: FSMContext):
         logger.info(f"Message from user {cid}")
 
         config['CLIENT']['chat_id'] = cid
-        config['CLIENT']['last_message'] = last_message['message_id']
+        config['CLIENT']['last_message'] = str(last_message['message_id'])
         
         save_config(config)
         
