@@ -14,7 +14,7 @@ aiogram telegram bot for control miners
 
 # Feature:
 - can run and stop mining with bot. Use commands /run and /stop
-- bot show total profit for all miners that running now
+- bot show total profit for all miners that running now. For calculation profit uses whattomine
 - show your current balance at nanopool for all coins that specified in config.ini
 - show one best coin with maximum profit for coins that specefied in config.ini
 
