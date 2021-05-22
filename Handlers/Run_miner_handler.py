@@ -33,6 +33,8 @@ def run_rig(name):
     email = config[name]['email']
 
     devices = config[name]['devices']
+
+    extra_params = config[name]['extra_params']
     
     wallet_plus_rig_name = ""
     
@@ -43,10 +45,10 @@ def run_rig(name):
 
     run_miner =  f"nbminer -a {coin} -o {pool1} -u {wallet_plus_rig_name} "   
 
-    if pool2 != '-':
+    if pool2 != '':
         run_miner += f"-o1 {pool2} -u1 {wallet_plus_rig_name} "
 
-    run_miner += f'-log --temperature-limit {temp_limit} --devices {devices} --api 127.0.0.1:{port}'
+    run_miner += f'-log --temperature-limit {temp_limit} --devices {devices} --api 127.0.0.1:{port} {extra_params}'
     
     logger.info(f"Running command:\n{run_miner}")
     p = subprocess.Popen(run_miner, creationflags=subprocess.CREATE_NEW_CONSOLE)

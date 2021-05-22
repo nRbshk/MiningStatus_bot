@@ -17,6 +17,7 @@ class Start_handler(StatesGroup):
 
 
 def stop_rigs():
+    logger.info("Stopping all rigs.")
     name = 'nbminer.exe'
     for proc in psutil.process_iter():
         if name.lower() == proc.name().lower():

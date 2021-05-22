@@ -17,8 +17,9 @@ aiogram telegram bot for control miners
 - bot show total profit for all miners that running now. For calculation profit uses whattomine
 - show your current balance at nanopool for all coins that specified in config.ini
 - show one best coin with maximum profit for coins that specefied in config.ini
+- can config miner with extra params. How you can do this you can look at nbminer params
 
 # Plans:
 - support not only nanopool pool. (ethermine etc)
-- more complex mining setup
+
 

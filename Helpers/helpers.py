@@ -154,7 +154,7 @@ def check_maximum_profit(config) -> str:
             logger.warning("Whattomine is not reachable!")
             return "Whattomine is not reachable!\n"
 
-        if config[coin]['wallet'] != '-' and config[coin]['pool_name'] != 'nicehash':
+        if config[coin]['wallet'] != '' and config[coin]['pool_name'] != 'nicehash':
             answer += check_ergo_balance_at_nanopool(coin.lower(), config[coin]['wallet'])
         
         time.sleep(0.5)
