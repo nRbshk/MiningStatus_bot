@@ -21,13 +21,18 @@ def run_rig(name):
     temp_limit = config['LIMITS']['temp_limit']
     
     coin = name.lower()
+    
     port = config[name]['port']
+    
     pool_name = config[name]['pool_name']
     pool1 = config[name]['pool1']
     pool2 = config[name]['pool2']
+    
     wallet = config[name]['wallet']
     rig_name = config[name]['rig_name']
     email = config[name]['email']
+
+    devices = config[name]['devices']
     
     wallet_plus_rig_name = ""
     
@@ -41,7 +46,7 @@ def run_rig(name):
     if pool2 != '-':
         run_miner += f"-o1 {pool2} -u1 {wallet_plus_rig_name} "
 
-    run_miner += f'-log --temperature-limit {temp_limit} --api 127.0.0.1:{port}'
+    run_miner += f'-log --temperature-limit {temp_limit} --devices {devices} --api 127.0.0.1:{port}'
     
     logger.info(f"Running command:\n{run_miner}")
     p = subprocess.Popen(run_miner, creationflags=subprocess.CREATE_NEW_CONSOLE)

@@ -1,20 +1,24 @@
 # MiningStat_bot
-aiogram telegram bot
+aiogram telegram bot for control miners
 
-# Запуск:
-
+# Run:
 - python -m pip install -r req.txt
-- Переименовываем example.ini в config.ini
-- Пишем @BotFather и получаем токен от него. вставляем токен в файл config.ini
-- В файле config.ini заполняем монеты согласно примеру в config.ini, использовать нужно только NBMiner
+- Rename example.ini to config.ini
+- Write @BotFather and receive token for your bot. put this token into config.ini
+- In config.ini setup your coins. Work only with NBMiner. 
+- put nbminer.exe in bot root folder. Also need driver_install.bat and driver_uninstall.bat
+- add nbminer.exe to exceptions for antivirus
 - python main.py
-- Открыть диалог с ботом и написать /start
-- /run и выбрать риг
+- Open dialog with your bot a write /start
+- /run and choose coin
 
-# Фичи:
-- можно запускать майнер через бота
-- можно останавливать майнеры через бота
-- показывает текущую прибыльность для фармящейся монеты в реальном времени, взятую с whattomine
-- показывает текущее состояние кошелька на nanopool для всех монет, указанных в config
-- показывает максимально прибыльную монету среди указанных (нужно указать для каждой монеты хешрейт и потребление)
+# Feature:
+- can run and stop mining with bot. Use commands /run and /stop
+- bot show total profit for all miners that running now
+- show your current balance at nanopool for all coins that specified in config.ini
+- show one best coin with maximum profit for coins that specefied in config.ini
+
+# Plans:
+- support not only nanopool pool. (ethermine etc)
+- more complex mining setup
 
