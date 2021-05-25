@@ -21,5 +21,5 @@ aiogram telegram bot for control miners
 
 # Plans:
 - support not only nanopool pool. (ethermine etc)
-
+- bot can running miner to best profit coin. Example: coin1 profit is 10$ and coin2 profit is 11$, but currently active mining coin1, bot stopping  mining coin1 and running coin2.
 
