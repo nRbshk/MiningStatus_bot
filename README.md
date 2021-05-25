@@ -11,6 +11,8 @@ aiogram telegram bot for control miners
 - python main.py
 - Open dialog with your bot and write /start
 - /run and choose coin
+
+
 ![first run](first_run.png)
 
 # Features:
