@@ -67,7 +67,7 @@ def get_profit(json: dict) -> str:
     
     for device in json['miner']['devices']:
         key = device[info]
-        hrate = float(device[hashrate].split('.')[0])
+        hrate = float(device[hashrate].split(' ')[0])
         dpower = float(device[power])
         if key in device_count.keys():
             device_count[key] += 1
