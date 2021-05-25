@@ -9,7 +9,7 @@ aiogram telegram bot for control miners
 - put nbminer.exe in bot root folder. Also need driver_install.bat and driver_uninstall.bat
 - add nbminer.exe to exceptions for antivirus
 - python main.py
-- Open dialog with your bot a write /start
+- Open dialog with your bot and write /start
 - /run and choose coin
 
 # Feature:
