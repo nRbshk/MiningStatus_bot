@@ -12,8 +12,7 @@ aiogram telegram bot for control miners
 - Open dialog with your bot and write /start
 - /run and choose coin
 
-## Last steps and how it looks
-![first run](first_run.png)
+
 
 # Features:
 - can run and stop mining with bot. Use commands /run and /stop
