@@ -1,4 +1,4 @@
-# MiningStat_bot
+# MiningStatus_bot
 aiogram telegram bot for control miners
 
 # Run:
