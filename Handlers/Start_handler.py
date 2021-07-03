@@ -18,6 +18,18 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
     await message.answer("Cancel", reply_markup=types.ReplyKeyboardRemove())
 
 
+async def update_message(message: types.Message, state: FSMContext):
+    logger.info("update message")
+    cid = str(message.from_user.id)
+    if config['CLIENT']['chat_id'] !=  cid:
+        await message.answer("You are not admin and you can't use this bot.")
+        await state.finish()
+    else:
+        last_message = await message.answer("Statistic will update here.")
+        config['CLIENT']['last_message'] = str(last_message['message_id'])
+        save_config(config)
+        await state.finish()
+
 
 
 async def start_h(message: types.Message, state: FSMContext):
@@ -44,3 +56,4 @@ async def start_h(message: types.Message, state: FSMContext):
 def register_handlers_start(dp: Dispatcher):
     dp.register_message_handler(start_h, commands="start", state="*")
     dp.register_message_handler(cmd_cancel, commands='cancel', state='*')
+    dp.register_message_handler(update_message, commands='update_message', state='*')

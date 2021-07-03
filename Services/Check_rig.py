@@ -6,7 +6,7 @@ from aiogram.utils.markdown import code
 from aiogram import types
 
 
-from Helpers.helpers import check_maximum_profit, config, prepare_message, save_config, get_coins_names_from_config
+from Helpers.helpers import check_maximum_profit, config, prepare_message, save_config, get_coins_names_from_config, get_time
 
 from aiogram import Bot
 
@@ -35,18 +35,18 @@ async def check_rig(bot: Bot):
                 port = config[coin]['port']
                 response = get(f'http://127.0.0.1:{port}/api/v1/status')
             except:
-                edited_msg += f"\nRig at port {port} is not active!\n\n"
+                # edited_msg += f"\nRig at port {port} is not active!\n\n"
                 logger.info(f"Rig at port {port} is not active!")
                 continue
 
             if response.status_code == 200:
                 json = response.json()
                 edited_msg += await prepare_message(json)
-                edited_msg += "\n\n"
+                edited_msg += "\n"
 
             del response
 
-                
+        edited_msg += f"Updated at {get_time()}"
         edited_msg = code(edited_msg)
         if config['CLIENT']['last_message'] == "-1":
             last_message = await bot.send_message(chat_id=config['CLIENT']['chat_id'], text=edited_msg, parse_mode=types.ParseMode.MARKDOWN_V2)

@@ -20,7 +20,7 @@ class Start_miner(StatesGroup):
 def run_rig(name):
     temp_limit = config['LIMITS']['temp_limit']
     
-    coin = name.lower()
+    coin = config[name]['coin']
     
     port = config[name]['port']
     
@@ -38,12 +38,14 @@ def run_rig(name):
     
     wallet_plus_rig_name = ""
     
+    update_coin = coin
+        
     if pool_name == 'nicehash':
         wallet_plus_rig_name = f"{wallet}.{rig_name}"
     else:
         wallet_plus_rig_name = f"{wallet}.{rig_name}/{email}"
 
-    run_miner =  f"nbminer -a {coin} -o {pool1} -u {wallet_plus_rig_name} "   
+    run_miner =  f"nbminer -a {update_coin} -o {pool1} -u {wallet_plus_rig_name} "   
 
     if pool2 != '':
         run_miner += f"-o1 {pool2} -u1 {wallet_plus_rig_name} "
@@ -52,7 +54,6 @@ def run_rig(name):
     
     logger.info(f"Running command:\n{run_miner}")
     p = subprocess.Popen(run_miner, creationflags=subprocess.CREATE_NEW_CONSOLE)
-
     config[name]['active_miner'] = '1'
 
 

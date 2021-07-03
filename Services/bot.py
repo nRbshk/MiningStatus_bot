@@ -9,6 +9,7 @@ from Helpers.helpers import config
 from Handlers.Run_miner_handler import register_handlers_start_miner
 from Handlers.Start_handler import register_handlers_start
 from Handlers.Stop_rigs_handler import register_handlers_stop
+from Handlers.Set_status_handler import register_handler_set_status
 
 from Services.Check_rig import check_rig
 
@@ -22,7 +23,9 @@ async def set_commands(bot: Bot):
         BotCommand(command='/start', description='How to start'),
         BotCommand(command='/cancel', description='Reset to start'),
         BotCommand(command='/stop', description='Stop all rigs'),
-        BotCommand(command='/run', description='Run choosen miner')
+        BotCommand(command='/run', description='Run choosen miner'),
+        BotCommand(command='/set_status', description='Set Status for rig name'),
+        BotCommand(command='/update_message', description='Update last message')
 
     ]
 
@@ -47,6 +50,7 @@ async def start():
     register_handlers_start(dp)
     register_handlers_start_miner(dp)
     register_handlers_stop(dp)
+    register_handler_set_status(dp)
 
     await set_commands(bot)
 
