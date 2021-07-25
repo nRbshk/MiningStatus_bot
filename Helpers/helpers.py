@@ -240,7 +240,7 @@ def get_current_profit(coin_name):
             response = get(f'http://127.0.0.1:{port}/api/v1/status')
         except:
             logger.info(f"Rig at port {port} is not active!")
-            return 1
+            continue
         json = response.json()
         for device in json['miner']['devices']:
             hrate = device[hashrate].split(" ")[0]
