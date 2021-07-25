@@ -1,6 +1,7 @@
 import logging
 import datetime
 import time
+from attr import has
 from requests import get
 from bs4 import BeautifulSoup
 import configparser
@@ -204,6 +205,64 @@ def print_profit_rewards(profit: float, rewards: float, coin: str):
     answer += "{0:<10}${1:<9}{2:>12}\n".format("WEEK", "{0:.2f}".format(profit * 7), "{0:.6f}".format(rewards * 7))
     answer += "{0:<10}${1:<9}{2:>12}\n".format("MONTH", "{0:.2f}".format(profit * 30), "{0:.6f}".format(rewards * 30))
     return answer
+
+
+def get_day_month_year():
+    logger.info("START get_day_month_year date")
+    import datetime
+    """
+    return date in format day.month.year
+    """
+    time = str(datetime.datetime.now())
+    time = time[0:10]
+    year, month, day = time.split("-")
+    return int(year), int(month), int(day)
+
+def get_time():
+    logger.info("START get_time")
+    import datetime
+
+    time = str(datetime.datetime.now()).split(" ")[1]
+    time = ":".join(time.split(":")[0:2])
+
+    return time
+
+
+def get_current_profit(coin_name):
+    coins = get_coins_names_from_config(config)
+    coins = [coin for coin in coins if coin.startswith(coin_name.upper())]
+    total_hashrate = 0.0
+    total_power = 0.0
+    for coin in coins:
+        port = config[coin]['port']
+
+        try:
+            response = get(f'http://127.0.0.1:{port}/api/v1/status')
+        except:
+            logger.info(f"Rig at port {port} is not active!")
+            return 1
+        json = response.json()
+        for device in json['miner']['devices']:
+            hrate = device[hashrate].split(" ")[0]
+            total_hashrate += float(hrate)
+
+            pwr = device[power]
+            total_power += float(pwr)
+    current_coin = coins_dict[coin_name.lower()]
+    response = get(f"https://whattomine.com/coins/{current_coin}?cost={config['LIMITS']['cost']}&hr={total_hashrate}&p={total_power}&fee={config['LIMITS']['fee']}&commit=Calculate")
+    
+    if response.status_code != 200:
+        logger.warning("Whattomine is not reachable!")
+        return 1
+    soup = BeautifulSoup(response.text, 'lxml')
+    table = [line for line in soup.find('tr', {'class' : 'table-active'}).text.split("\n") if line != ""]
+    try:
+        day_profit = float(table[-1][1:])
+        day_rewards = float(table[2])
+    except:
+        logger.warning("Whattomine is not reachable!")
+        return "Whattomine is not reachable!\n"
+    return day_profit, day_rewards
 
 
 config = get_config("config.ini")
