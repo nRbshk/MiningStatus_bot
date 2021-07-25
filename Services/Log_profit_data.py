@@ -29,7 +29,7 @@ async def log_data():
 
 
 
-        await sleep(30)
+        await sleep(600)
 
 
 
