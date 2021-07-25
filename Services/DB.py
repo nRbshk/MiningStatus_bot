@@ -24,7 +24,7 @@ class DB:
         cursor = conn.cursor()
        
         y, m, d = get_day_month_year()
-        time = get_time()
+        time = get_h_m()
 
         cursor.execute("INSERT INTO db_profit_balance VALUES (?, ?, ?, ?, ?, ?)", (None, sqlite3.Date(y, m , d), time, balance, profit_fiat, profit_coin))
         
