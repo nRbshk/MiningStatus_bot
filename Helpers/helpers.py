@@ -218,7 +218,7 @@ def get_day_month_year():
     year, month, day = time.split("-")
     return int(year), int(month), int(day)
 
-def get_time():
+def get_h_m():
     logger.info("START get_time")
     import datetime
 
