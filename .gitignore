@@ -9,3 +9,5 @@ logs
 nbminer.exe
 driver_install.bat
 driver_uninstall.bat
+eth.db
+plt.png
