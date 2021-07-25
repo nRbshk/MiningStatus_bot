@@ -10,8 +10,10 @@ from Handlers.Run_miner_handler import register_handlers_start_miner
 from Handlers.Start_handler import register_handlers_start
 from Handlers.Stop_rigs_handler import register_handlers_stop
 from Handlers.Set_status_handler import register_handler_set_status
+from Handlers.Show_graph import register_handler_show_graph
 
 from Services.Check_rig import check_rig
+from Services.Log_profit_data import log_data
 
 from asyncio import create_task
 
@@ -25,7 +27,8 @@ async def set_commands(bot: Bot):
         BotCommand(command='/stop', description='Stop all rigs'),
         BotCommand(command='/run', description='Run choosen miner'),
         BotCommand(command='/set_status', description='Set Status for rig name'),
-        BotCommand(command='/update_message', description='Update last message')
+        BotCommand(command='/update_message', description='Update last message'),
+        BotCommand(command='/show_graph', description='Show profit')
 
     ]
 
@@ -51,11 +54,13 @@ async def start():
     register_handlers_start_miner(dp)
     register_handlers_stop(dp)
     register_handler_set_status(dp)
+    register_handler_show_graph(dp)
 
     await set_commands(bot)
 
+    create_task(log_data())
     create_task(check_rig(bot))
-    
+
     await dp.start_polling(timeout=600)
 
     
