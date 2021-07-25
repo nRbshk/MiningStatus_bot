@@ -24,13 +24,13 @@ def split_data_from_list(data_list: list):
         profit_fiat.append("{0:.2f}".format(float(data[dbp.profit_fiat.value])))
         profit_crypto.append("{0:.5f}".format(float(data[dbp.profit_crypto.value])))
 
-    logger.info("prepared data for length", len(balance))
+    logger.info(f"prepared data for length {len(balance)}")
     return [date_time, balance, profit_fiat, profit_crypto]
 
 def plot_graph(data_list: list):
     logger.info("plot graph")
     date_time, balance, profit_fiat, profit_crypto = split_data_from_list(data_list)
-    plt.figure(figsize=(19.2, 10.8), dpi=100)
+    plt.figure(figsize=(19.2, 10.8), dpi=250)
     plt.plot(date_time, balance, color='red', marker='x', label='balance')
     plt.xticks(rotation=45)
     plt.plot(date_time, profit_fiat, color='green', marker='+', label='profit_fiat$')
