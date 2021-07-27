@@ -32,7 +32,7 @@ def plot_graph(data_list: list):
     logger.info("plot graph")
     date_time, balance, profit_fiat, profit_crypto = split_data_from_list(data_list)
     # list_with_spaces = ["" for _ in range(len(date_time))]
-    plt.figure(figsize=(19.2, 10.8), dpi=250)
+    plt.figure(figsize=(19.2, 14.6), dpi=250)
     plt.subplot(3, 1, 1)
     plt.plot(date_time, balance, color='red', marker='x', label='balance')
     plt.xticks(rotation=45)
@@ -49,7 +49,9 @@ def plot_graph(data_list: list):
     plt.ylim(bottom=0)
     plt.subplot(3, 1, 3)
     plt.plot(date_time, profit_crypto, color='blue', marker='o', label='profit_crypto')
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=90)
+    if len(date_time) > 100:
+        plt.xticks(date_time[0::len(date_time) // 20])
     plt.legend()
     plt.grid()
     plt.ylim(bottom=0)
