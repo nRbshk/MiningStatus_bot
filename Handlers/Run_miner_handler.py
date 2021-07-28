@@ -43,12 +43,12 @@ def run_rig(name):
     if pool_name == 'nicehash':
         wallet_plus_rig_name = f"{wallet}.{rig_name}"
     else:
-        wallet_plus_rig_name = f"{wallet}.{rig_name}/{email}"
+        wallet_plus_rig_name = f"{wallet}.{rig_name}"
 
-    run_miner =  f"nbminer -a {update_coin} -o {pool1} -u {wallet_plus_rig_name} "   
+    run_miner =  f"nbminer -a {update_coin} -o {pool1} -u {wallet_plus_rig_name} -p {email}"   
 
     if pool2 != '':
-        run_miner += f"-o1 {pool2} -u1 {wallet_plus_rig_name} "
+        run_miner += f"-o1 {pool2} -u1 {wallet_plus_rig_name} -p1 {email}"
 
     run_miner += f'-log --temperature-limit {temp_limit} --devices {devices} --api 127.0.0.1:{port} {extra_params}'
     
