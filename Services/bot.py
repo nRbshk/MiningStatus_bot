@@ -10,7 +10,7 @@ from Handlers.Run_miner_handler import register_handlers_start_miner
 from Handlers.Start_handler import register_handlers_start
 from Handlers.Stop_rigs_handler import register_handlers_stop
 from Handlers.Set_status_handler import register_handler_set_status
-from Handlers.Show_figure import register_handler_show_graph
+from Handlers.Show_figure import register_handler_show_figure
 
 from Services.Check_rig import check_rig
 from Services.Log_profit_data import log_data
