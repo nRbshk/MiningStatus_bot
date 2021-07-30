@@ -15,6 +15,7 @@ async def log_data():
     coin_name = 'ETH'
     delay_time = 60 * 15
     while True:
+        await sleep(delay_time)
         logger.info("start log data")
         balance = check_balance_at_nanopool(coin_name.lower(), config['WALLET'][coin_name.lower()]).split("\n")
         if len(balance) == 1:
@@ -31,7 +32,7 @@ async def log_data():
 
 
         logger.info("end log data")
-        await sleep(delay_time)
+
 
 
 

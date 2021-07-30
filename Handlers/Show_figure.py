@@ -10,7 +10,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from Helpers.helpers import config
-from Helpers.Plot_graph import plot_graph
+from Helpers.Plot_figure import plot_figure
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ keys = [['1','2','3'], ['4','5','6'] , ['7','8','9'] , ['SP', '0' , '<'], ['OK']
 kb_buttons = CallbackData('key', 'key_value')
 
 
-class Show_graph_handler(StatesGroup):
+class Show_figure_handler(StatesGroup):
 
     enter_date = State()
     # date_entered = State()
@@ -48,7 +48,7 @@ async def start_enter_date(message: types.Message, state: FSMContext):
         await state.update_data(date="")
         await state.update_data(message=message)
         await message.answer("Enter start date for graph in format year month day.", reply_markup=None)
-        await Show_graph_handler.enter_date.set()
+        await Show_figure_handler.enter_date.set()
 
 async def show_graph(message: types.Message, state: FSMContext):
     logger.info("show graph")
@@ -62,7 +62,7 @@ async def show_graph(message: types.Message, state: FSMContext):
     if (len(data)) == 0:
         await message.answer("No data for this period.", reply_markup=ReplyKeyboardRemove())
     else:
-        plot_graph(data)
+        plot_figure(data)
         await message.answer_document(open('plt.png', 'rb'), reply_markup=ReplyKeyboardRemove())
         await state.finish()
     
@@ -87,4 +87,4 @@ def register_handler_show_graph(dp: Dispatcher):
     dp.register_message_handler(start_enter_date, commands="show_graph", state="*")
     # dp.register_callback_query_handler(callback_enter_number, state=Show_graph_handler.enter_date)
     # dp.register_message_handler(show_graph, state=Show_graph_handler.date_entered)
-    dp.register_message_handler(show_graph, state=Show_graph_handler.enter_date)
+    dp.register_message_handler(show_graph, state=Show_figure_handler.enter_date)
