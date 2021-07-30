@@ -84,7 +84,7 @@ async def show_graph(message: types.Message, state: FSMContext):
 #     await state.set_data(user_data)
 
 def register_handler_show_figure(dp: Dispatcher):
-    dp.register_message_handler(start_enter_date, commands="show_graph", state="*")
+    dp.register_message_handler(start_enter_date, commands="show_figure", state="*")
     # dp.register_callback_query_handler(callback_enter_number, state=Show_graph_handler.enter_date)
     # dp.register_message_handler(show_graph, state=Show_graph_handler.date_entered)
     dp.register_message_handler(show_graph, state=Show_figure_handler.enter_date)
