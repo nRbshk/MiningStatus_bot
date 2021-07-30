@@ -28,7 +28,7 @@ async def set_commands(bot: Bot):
         BotCommand(command='/run', description='Run choosen miner'),
         BotCommand(command='/set_status', description='Set Status for rig name'),
         BotCommand(command='/update_message', description='Update last message'),
-        BotCommand(command='/show_graph', description='Show profit')
+        BotCommand(command='/show_figure', description='Show figure with profits and balance')
 
     ]
 
