@@ -18,13 +18,18 @@ class DB_positions(Enum):
 class DB:
 
 
-    def insert_balance_profit(self, name, balance, profit_fiat, profit_coin):
+    def insert_balance_profit(self, name, balance, profit_fiat, profit_coin, y_m_d=None, time=None):
         logger.info("START insert_balance_profit")
         conn = sqlite3.connect(f"{name}.db")
         cursor = conn.cursor()
-       
-        y, m, d = get_day_month_year()
-        time = get_h_m()
+
+        if y_m_d==None:
+            y, m, d = get_day_month_year()
+        else:
+            y,m,d = y_m_d
+
+        if time==None:
+            time = get_h_m()
 
         cursor.execute("INSERT INTO db_profit_balance VALUES (?, ?, ?, ?, ?, ?)", (None, sqlite3.Date(y, m , d), time, balance, profit_fiat, profit_coin))
         
@@ -52,5 +57,23 @@ class DB:
 
         logger.info("END get_balance_profit")
         return exucuted_data
+
+    def get_last_value(self, name):
+        logger.info("START get_last_value")
+
+        conn = sqlite3.connect(f"{name}.db")
+
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM db_profit_Balance WHERE ID = (SELECT MAX(ID)  FROM db_profit_Balance)")
+
+        executed_data = cursor.fetchone()
+
+        conn.commit()
+        conn.close()
+
+        logger.info("END get_last_value")
+    
+        return executed_data[DB_positions.date.value], executed_data[DB_positions.time.value], executed_data[DB_positions.balance.value]
 
 db = DB()
