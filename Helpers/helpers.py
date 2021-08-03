@@ -187,7 +187,7 @@ def check_balance_at_nanopool(coin, wallet):
     balance = response.json()['data'] 
     
     answer = "{0:<20}{1:<10}\n".format("COIN", coin.upper())
-    answer += "{0:<20}{1:<10}\n".format("BALANCE", balance)
+    answer += "{0:<20}{1:<10}\n".format("BALANCE","{0:.10f}".format(balance))
 
     logger.info(f"Balance is checked for {coin} at nanopool.")
 
