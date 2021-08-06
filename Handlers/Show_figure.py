@@ -47,17 +47,17 @@ async def start_enter_date(message: types.Message, state: FSMContext):
         #     kb.add(*buttons)
         await state.update_data(date="")
         await state.update_data(message=message)
-        await message.answer("Enter start date for graph in format year month day.", reply_markup=None)
+        await message.answer("Enter start date for graph in format year month day coin_name.", reply_markup=None)
         await Show_figure_handler.enter_date.set()
 
 async def show_graph(message: types.Message, state: FSMContext):
     logger.info("show graph")
-    if len(message.text.split(" ")) != 3:
+    if len(message.text.split(" ")) != 4:
         logger.info("incorrect format")
-        await message.answer("Enter in format year month day.")
-    year, month, day = message.text.split(" ")
+        await message.answer("Enter in format year month day coin_name.")
+    year, month, day, coin_name = message.text.split(" ")
     logger.info(f"{year}, {month}, {day}")
-    data = db.get_balance_profit('eth', int(year), int(month), int(day))
+    data = db.get_balance_profit(coin_name.lower(), int(year), int(month), int(day))
 
     if (len(data)) == 0:
         await message.answer("No data for this period.", reply_markup=ReplyKeyboardRemove())
