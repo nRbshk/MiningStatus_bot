@@ -69,11 +69,13 @@ class DB:
 
         executed_data = cursor.fetchone()
 
+        if type(executed_data) != type(()):
+            return 1, None, None, None
         conn.commit()
         conn.close()
 
         logger.info("END get_last_value")
     
-        return executed_data[DB_positions.date.value], executed_data[DB_positions.time.value], executed_data[DB_positions.balance.value]
+        return 0, executed_data[DB_positions.date.value], executed_data[DB_positions.time.value], executed_data[DB_positions.balance.value]
 
 db = DB()

@@ -175,12 +175,12 @@ def check_balance_at_nanopool(coin, wallet):
 
     if response.status_code != 200:
         logger.warning("Nanopool is not reachable!")
-        return 1
+        return "1"
     
     try:
         error = response.json()['error']
         logger.error(f"Nanopool error {error}")
-        return 1
+        return "1"
     except:
         pass
         

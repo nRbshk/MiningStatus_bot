@@ -15,32 +15,46 @@ logger = logging.getLogger(__name__)
 
 
 async def log_data():
-    coin_name = 'ETH'
+    coin_name_eth = 'ETH'
+    coin_name_ergo = 'ERGO'
     delay_time = 60 * 15
-    await check_at_start_disabled_time(coin_name)
+    await check_at_start_disabled_time(coin_name_eth)
+    await check_at_start_disabled_time(coin_name_ergo)
     while True:
         await sleep(delay_time)
         logger.info("start log data")
-        balance = check_balance_at_nanopool(coin_name.lower(), config['WALLET'][coin_name.lower()]).split("\n")
-        if len(balance) == 1:
-            continue
-        balance = balance[1].split(" ")[-1]
-
-        profit_rewards = get_current_profit(coin_name)
-
-        if profit_rewards == 1:
-            continue
-        day_profit, day_reward = profit_rewards
-
-        db.insert_balance_profit(coin_name, balance, day_profit, day_reward)
+        await push_profit_to_db(coin_name_eth)
+        await push_profit_to_db(coin_name_ergo)
 
 
         logger.info("end log data")
 
+async def push_profit_to_db(coin_name):
+    logger.info("starting checking", coin_name)
+    balance = check_balance_at_nanopool(coin_name.lower(), config['WALLET'][coin_name.lower()]).split("\n")
+    if len(balance) == 1:
+        logger.info("len(balance) == ", 1)
+        return 1
+    balance = balance[1].split(" ")[-1]
+
+    profit_rewards = get_current_profit(coin_name)
+
+    if profit_rewards == 1:
+        logger.info("nanopool error")
+        return 1
+    day_profit, day_reward = profit_rewards
+    if day_profit == 0 and day_reward == 0:
+        logger.info('skiping push to db due to zero profit and reward')
+        return 0
+    db.insert_balance_profit(coin_name, balance, day_profit, day_reward)
+    logger.info("everything is ok")
+    return 0
 
 
 async def check_at_start_disabled_time(coin_name):
-    last_date, last_time, balance = db.get_last_value("eth")
+    empty, last_date, last_time, balance = db.get_last_value(coin_name.lower())
+    if empty:
+        return None
     y, m, d = [int(v) for v in last_date.split("-")]
     last_date = Date(y,m,d)
     del y, m, d
@@ -66,13 +80,13 @@ async def check_at_start_disabled_time(coin_name):
                 date_was_updated = True
             elif date_was_updated:
                 date_was_updated = False
-            db.insert_balance_profit(coin_name, balance, 0.0, 0.0, (date.year, date.month, date.day), time=f"{hh}:{mm}")
+            db.insert_balance_profit(coin_name.lower(), balance, 0.0, 0.0, (date.year, date.month, date.day), time=f"{hh}:{mm}")
     elif last_date == now_date and now_minutes - last_minutes > 20:
         step = 15
         for minutes in range(last_minutes + step, now_minutes, step):
             hh =(minutes // 60) % 24 
             mm = minutes % 60
-            db.insert_balance_profit(coin_name, balance, 0.0, 0.0, (now_date.year, now_date.month, now_date.day), time=f"{hh}:{mm}")  
+            db.insert_balance_profit(coin_name.lower(), balance, 0.0, 0.0, (now_date.year, now_date.month, now_date.day), time=f"{hh}:{mm}")  
 
 
 
