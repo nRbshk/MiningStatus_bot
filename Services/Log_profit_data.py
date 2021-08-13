@@ -30,10 +30,10 @@ async def log_data():
         logger.info("end log data")
 
 async def push_profit_to_db(coin_name):
-    logger.info("starting checking", coin_name)
+    logger.info("starting checking {coin_name}")
     balance = check_balance_at_nanopool(coin_name.lower(), config['WALLET'][coin_name.lower()]).split("\n")
     if len(balance) == 1:
-        logger.info("len(balance) == ", 1)
+        logger.info("len(balance) == 1")
         return 1
     balance = balance[1].split(" ")[-1]
 
@@ -43,9 +43,9 @@ async def push_profit_to_db(coin_name):
         logger.info("nanopool error")
         return 1
     day_profit, day_reward = profit_rewards
-    if day_profit == 0 and day_reward == 0:
-        logger.info('skiping push to db due to zero profit and reward')
-        return 0
+    # if day_profit == 0 and day_reward == 0:
+    #     logger.info('skiping push to db due to zero profit and reward')
+    #     return 0
     db.insert_balance_profit(coin_name, balance, day_profit, day_reward)
     logger.info("everything is ok")
     return 0

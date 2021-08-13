@@ -55,7 +55,7 @@ def get_device_info(json: dict) -> str:
 def get_profit(json: dict) -> str:
     logger.info("Checking profit for setuped rig")
     
-    coin = coins_dict[json['stratum']['algorithm']]
+    coin = coins_to_nanopool[json['stratum']['algorithm']]
     device_count = { }
     total_hashrate = 0.0
     total_power = 0.0
@@ -71,23 +71,14 @@ def get_profit(json: dict) -> str:
         total_hashrate += hrate
         total_power += dpower
 
-    response = get(f"https://whattomine.com/coins/{coin}?cost={config['LIMITS']['cost']}&hr={total_hashrate}&p={total_power}&fee={config['LIMITS']['fee']}&commit=Calculate")
-    if response.status_code != 200:
-        logger.info("Whattomine is not reachable!")
-        return "Whattomine is not reachable!\n"
-    
-
-    soup = BeautifulSoup(response.text, 'lxml')
-
-    table = [line for line in soup.find('tr', {'class' : 'table-active'}).text.split("\n") if line != ""]
-
-    try:
-        daily_profit = float(table[-1][1:])
-        daily_estimated_rewards = float(table[2])
-    except:
-        logger.info("Whattomine is not reachable!")
-        return "Whattomine is not reachable!"
-
+    response = get(f"https://api.nanopool.org/v1/{coin.lower()}/approximated_earnings/{total_hashrate}")
+    response_data = response.json()
+    if response_data['status'] == False:
+        logger.warning("Nanopool api is not reachable!")
+        return "Nanopool api is not reachable!\n"
+    data = response_data['data']
+    daily_profit = float("{0:.2f}".format(float(data['day']['dollars'])))
+    daily_estimated_rewards = float("{0:.6f}".format(float(data['day']['coins'])))
 
     answer = print_profit_rewards(daily_profit, daily_estimated_rewards, json['stratum']['algorithm'])
 
@@ -130,21 +121,16 @@ def check_maximum_profit(config) -> str:
     rewards_dict = dict.fromkeys(coins)
     answer = ""
     for coin in coins:
-        current_coin = coins_dict[coin.lower()]
-        response = get(f"https://whattomine.com/coins/{current_coin}?cost={config['LIMITS']['cost']}&hr={config['HASHRATE'][coin]}&p={config['POWER'][coin]}&fee={config['LIMITS']['fee']}&commit=Calculate")
-        if response.status_code != 200:
-            logger.warning("Whattomine is not reachable!")
-            return "Whattomine is not reachable!\n"
-            
-        soup = BeautifulSoup(response.text, 'lxml')
+        current_coin = coin.lower()
+        response = get(f"https://api.nanopool.org/v1/{current_coin}/approximated_earnings/{config['HASHRATE'][coin]}")
+        response_data = response.json()
+        if response_data['status'] == False:
+            logger.warning("Nanopool api is not reachable!")
+            return "Nanopool api is not reachable!\n"
+        data = response_data['data']
 
-        table = [line for line in soup.find('tr', {'class' : 'table-active'}).text.split("\n") if line != ""]
-        try:
-            profit_dict[coin] = float(table[-1][1:])
-            rewards_dict[coin] = float(table[2])
-        except:
-            logger.warning("Whattomine is not reachable!")
-            return "Whattomine is not reachable!\n"
+        profit_dict[coin] = float("{0:.2f}".format(float(data['day']['dollars'])))
+        rewards_dict[coin] = float("{0:.6f}".format(float(data['day']['coins'])))
         
         if config['WALLET'][coin] != '':
             answer += check_balance_at_nanopool(coin.lower(), config['WALLET'][coin])
@@ -233,7 +219,6 @@ def get_current_profit(coin_name):
     total_power = 0.0
     for coin in coins:
         port = config[coin]['port']
-
         try:
             response = get(f'http://127.0.0.1:{port}/api/v1/status')
         except:
@@ -246,20 +231,19 @@ def get_current_profit(coin_name):
 
             pwr = device[power]
             total_power += float(pwr)
-    current_coin = coins_dict[coin_name.lower()]
-    response = get(f"https://whattomine.com/coins/{current_coin}?cost={config['LIMITS']['cost']}&hr={total_hashrate}&p={total_power}&fee={config['LIMITS']['fee']}&commit=Calculate")
-    
-    if response.status_code != 200:
-        logger.warning("Whattomine is not reachable!")
+
+    current_coin = coin_name.lower()
+
+    response = get(f"https://api.nanopool.org/v1/{current_coin}/approximated_earnings/{total_hashrate}")
+
+    response_data = response.json()
+    if response_data['status'] == False:
+        logger.warning("Nanopool api is not reachable!")
         return 1
-    soup = BeautifulSoup(response.text, 'lxml')
-    table = [line for line in soup.find('tr', {'class' : 'table-active'}).text.split("\n") if line != ""]
-    try:
-        day_profit = float(table[-1][1:])
-        day_rewards = float(table[2])
-    except:
-        logger.warning("Whattomine is not reachable!")
-        return "Whattomine is not reachable!\n"
+    data = response_data['data']
+    day_profit = float("{0:.2f}".format(float(data['day']['dollars'])))
+    day_rewards = float("{0:.6f}".format(float(data['day']['coins'])))
+    
     return day_profit, day_rewards
 
 
@@ -292,3 +276,9 @@ coins_dict = {'ergo' : '340-erg-autolykos',
               'eth2' : '151-eth-ethash',
               'ethash' : '151-eth-ethash',
               'ethash2' : '151-eth-ethash'}
+coins_to_nanopool = {
+    'ethash' : 'eth',
+    'ergo' : 'ergo'
+}
+
+
