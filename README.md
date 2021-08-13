@@ -20,8 +20,4 @@ aiogram telegram bot for control miners
 - show your current balance at nanopool for all coins that specified in config.ini
 - show one best coin with maximum profit for coins that specefied in config.ini
 - can config miner with extra params. How you can do this you can look at nbminer params
-
-# Plans:
-- support not only nanopool pool. (ethermine etc)
-- bot can running miner to best profit coin. Example: coin1 profit is 10$ and coin2 profit is 11$, but currently active mining coin1, bot stopping  mining coin1 and running coin2. And this option can be selected by specific field in config or can be settled with bot dialog
-
+- profit calculates from nanopool api. as it's not support power consumption it will does not give any impact on profit
